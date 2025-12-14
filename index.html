@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang='ja'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>退職給付金診断</title>
+  <style>
+    :root{
+      --bg:#e9f6f1;
+      --primary:#2aa98b;
+      --primary2:#1f8e75;
+      --accent:#ff9a3c;
+      --card:#ffffff;
+      --text:#123a33;
+      --muted:#5b7f78;
+      --line:#d8eee6;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --radius:18px;
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: linear-gradient(180deg, #d9f3ea 0%, var(--bg) 40%, #fff 100%);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 14px 56px;
+    }
+
+    .hero{
+      background: radial-gradient(1200px 420px at 50% 0%, #bff0e3 0%, #c9f4e9 30%, #def8f1 60%, #ffffff 100%);
+      border-radius: 26px;
+      padding: 22px 18px 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(42,169,139,.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .heroTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      background: rgba(42,169,139,.14);
+      border: 1px solid rgba(42,169,139,.22);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--primary2);
+      font-weight: 700;
+      letter-spacing: .02em;
+      font-size: 13px;
+    }
+
+    .title{
+      margin: 8px 0 6px;
+      font-size: 32px;
+      line-height: 1.15;
+      letter-spacing: .01em;
+    }
+
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .stepGrid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stepCard{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      position: relative;
+      min-height: 92px;
+    }
+
+    .stepNo{
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: rgba(255,154,60,.16);
+      border: 1px solid rgba(255,154,60,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      color: #b35800;
+      font-size: 13px;
+    }
+
+    .stepCard h3{
+      margin: 10px 0 6px;
+      font-size: 14px;
+    }
+
+    .stepCard p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .main{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      align-items:start;
+    }
+
+    .panel{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .panelHead{
+      padding: 14px 16px;
+      background: linear-gradient(90deg, rgba(42,169,139,.16) 0%, rgba(42,169,139,.08) 60%, rgba(255,154,60,.06) 100%);
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .panelHead h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: .01em;
+    }
+
+    .progress{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 220px;
+      flex: 1;
+      justify-content:flex-end;
+    }
+
+    .bar{
+      height: 10px;
+      width: 180px;
+      background: rgba(31,142,117,.14);
+      border-radius: 999px;
+      overflow:hidden;
+      border: 1px solid rgba(31,142,117,.18);
+    }
+
+    .bar > div{
+      height:100%;
+      width: 33%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary2) 100%);
+      border-radius: 999px;
+      transition: width .35s ease;
+    }
+
+    .progText{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .panelBody{
+      padding: 16px;
+    }
+
+    .note{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    label{
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    input, select{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font-size: 14px;
+      outline: none;
+      background: #fbfffe;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    input:focus, select:focus{
+      border-color: rgba(42,169,139,.6);
+      box-shadow: 0 0 0 4px rgba(42,169,139,.12);
+    }
+
+    .qWrap{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .qCard{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px 12px 10px;
+      background: #ffffff;
+    }
+
+    .qTitle{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+    .qTitle h4{
+      margin:0;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .qHint{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .choices{
+      margin-top: 10px;
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      border: 1px solid rgba(42,169,139,.25);
+      background: rgba(42,169,139,.08);
+      color: var(--primary2);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+      font-weight: 800;
+      transition: transform .05s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .chip:active{transform: translateY(1px);}
+    .chip.on{
+      background: linear-gradient(90deg, rgba(42,169,139,.22) 0%, rgba(255,154,60,.10) 100%);
+      border-color: rgba(42,169,139,.55);
+      box-shadow: 0 8px 14px rgba(42,169,139,.12);
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 900;
+      cursor:pointer;
+      transition: transform .05s ease, filter .15s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      min-width: 140px;
+    }
+
+    .btn:active{transform: translateY(1px);}
+    .btnPrimary{
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary2) 100%);
+      color:#fff;
+    }
+    .btnGhost{
+      background: rgba(18,58,51,.06);
+      color: var(--text);
+      border: 1px solid rgba(18,58,51,.12);
+    }
+    .btnWarn{
+      background: linear-gradient(90deg, var(--accent) 0%, #ff7b1c 100%);
+      color:#fff;
+    }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .mini{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .miniHead{
+      padding: 14px 16px;
+      background: linear-gradient(90deg, rgba(255,154,60,.10) 0%, rgba(42,169,139,.10) 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .miniHead h3{
+      margin:0;
+      font-size: 14px;
+    }
+
+    .miniBody{
+      padding: 14px 16px 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .resultBox{
+      border: 1px solid rgba(42,169,139,.24);
+      background: #f4fffb;
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      margin-top: 12px;
+    }
+
+    .money{
+      font-size: 28px;
+      font-weight: 1000;
+      color: var(--primary2);
+      letter-spacing: .01em;
+      margin: 6px 0 2px;
+    }
+
+    .detail{
+      margin: 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.65;
+    }
+
+    .pillRow{
+      margin-top: 10px;
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      border: 1px solid rgba(18,58,51,.12);
+      background: rgba(18,58,51,.04);
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .hide{display:none;}
+
+    .footerNote{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px){
+      .main{grid-template-columns: 1fr;}
+      .progress{justify-content:flex-start;}
+      .bar{width: 160px;}
+    }
+    @media (max-width: 560px){
+      .title{font-size: 26px;}
+      .stepGrid{grid-template-columns: 1fr;}
+      .grid2{grid-template-columns: 1fr;}
+      .btn{min-width: 120px;}
+      .bar{width: 140px;}
+    }
+  </style>
+</head>
+<body>
+  <div class='wrap'>
+    <section class='hero'>
+      <div class='heroTop'>
+        <div>
+          <div class='badge'>かんたん入力で概算をチェック</div>
+          <h1 class='title'>退職給付金診断</h1>
+          <p class='subtitle'>
+            年齢や年収、勤続年数などの入力と、いくつかの質問に答えるだけで概算を表示します。
+            退職金制度や雇用保険の条件は人によって違うので、あくまで目安として使ってください。
+          </p>
+        </div>
+      </div>
+
+      <div class='stepGrid'>
+        <div class='stepCard'>
+          <div class='stepNo'>01</div>
+          <h3>基本情報を入力</h3>
+          <p>年齢、勤続年数、年収など</p>
+        </div>
+        <div class='stepCard'>
+          <div class='stepNo'>02</div>
+          <h3>質問に答える</h3>
+          <p>退職理由や状況で概算を調整</p>
+        </div>
+        <div class='stepCard'>
+          <div class='stepNo'>03</div>
+          <h3>概算結果を表示</h3>
+          <p>目安の金額と内訳イメージ</p>
+        </div>
+      </div>
+    </section>
+
+    <section class='main'>
+      <div class='panel' id='panel'>
+        <div class='panelHead'>
+          <h2 id='stepTitle'>ステップ1 基本情報</h2>
+          <div class='progress'>
+            <div class='bar'><div id='barFill'></div></div>
+            <div class='progText' id='progText'>1 / 3</div>
+          </div>
+        </div>
+
+        <div class='panelBody'>
+          <p class='note' id='stepNote'>
+            入力はざっくりでOKです。あとで調整できます。
+          </p>
+
+          <div id='step1'>
+            <div class='grid2'>
+              <div class='field'>
+                <label for='age'>年齢</label>
+                <input id='age' type='number' inputmode='numeric' min='15' max='80' placeholder='例 35'>
+              </div>
+              <div class='field'>
+                <label for='serviceYears'>勤続年数</label>
+                <input id='serviceYears' type='number' inputmode='decimal' min='0' max='60' step='0.5' placeholder='例 8'>
+              </div>
+
+              <div class='field'>
+                <label for='annualIncome'>直近の年収</label>
+                <input id='annualIncome' type='number' inputmode='numeric' min='0' step='10000' placeholder='例 5200000'>
+              </div>
+              <div class='field'>
+                <label for='workType'>雇用形態</label>
+                <select id='workType'>
+                  <option value='regular'>正社員</option>
+                  <option value='contract'>契約社員</option>
+                  <option value='part'>パート アルバイト</option>
+                </select>
+              </div>
+
+              <div class='field'>
+                <label for='reason'>退職理由</label>
+                <select id='reason'>
+                  <option value='voluntary'>自己都合</option>
+                  <option value='company'>会社都合</option>
+                  <option value='medical'>病気 けが 介護など</option>
+                </select>
+              </div>
+              <div class='field'>
+                <label for='plan'>退職金制度の有無</label>
+                <select id='plan'>
+                  <option value='unknown'>わからない</option>
+                  <option value='has'>ありそう</option>
+                  <option value='none'>ないと思う</option>
+                </select>
+              </div>
+            </div>
+
+            <div class='actions'>
+              <button class='btn btnPrimary' id='toStep2'>次へ</button>
+              <button class='btn btnGhost' id='fillDemo'>サンプル入力</button>
+            </div>
+          </div>
+
+          <div id='step2' class='hide'>
+            <p class='note'>
+              できる範囲で答えてください。わからない場合はそのまま次へ進んでもOKです。
+            </p>
+
+            <div class='qWrap' id='qWrap'></div>
+
+            <div class='actions'>
+              <button class='btn btnGhost' id='backTo1'>戻る</button>
+              <button class='btn btnPrimary' id='toStep3'>結果を見る</button>
+            </div>
+          </div>
+
+          <div id='step3' class='hide'>
+            <p class='note'>
+              概算結果です。制度や加入期間などで増減します。
+            </p>
+
+            <div class='resultBox'>
+              <div class='pillRow' id='summaryPills'></div>
+              <div class='money' id='totalMoney'>0円</div>
+              <p class='detail' id='breakdownText'></p>
+            </div>
+
+            <div class='resultBox' style='margin-top:12px;'>
+              <div class='pillRow'>
+                <span class='pill'>次のアクション</span>
+                <span class='pill'>確認ポイント</span>
+              </div>
+              <p class='detail' id='nextAction'></p>
+            </div>
+
+            <div class='actions'>
+              <button class='btn btnGhost' id='backTo2'>戻る</button>
+              <button class='btn btnWarn' id='resetAll'>最初から</button>
+            </div>
+
+            <div class='footerNote'>
+              注意: 本ページは概算の試算です。実際の給付は就業状況や加入期間、賃金日額、退職金規程などで決まります。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class='side'>
+        <div class='mini'>
+          <div class='miniHead'><h3>この診断で出すもの</h3></div>
+          <div class='miniBody'>
+            ・退職金の概算<br>
+            ・失業給付の概算<br>
+            ・合計の目安<br><br>
+            会社の退職金規程が不明でも、勤続年数と年収からざっくり推定します。
+          </div>
+        </div>
+
+        <div class='mini'>
+          <div class='miniHead'><h3>精度を上げるコツ</h3></div>
+          <div class='miniBody'>
+            ・年収は直近の額でOK<br>
+            ・自己都合か会社都合は重要<br>
+            ・勤続年数が長いほど影響大<br>
+            ・退職金制度の有無が分かると強い
+          </div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    ;(function(){
+      const el = (id)=>document.getElementById(id)
+
+      const state = {
+        age: null,
+        serviceYears: null,
+        annualIncome: null,
+        workType: 'regular',
+        reason: 'voluntary',
+        plan: 'unknown',
+        answers: {}
+      }
+
+      const questions = [
+        {
+          key:'bonus',
+          title:'直近1年で賞与がある',
+          hint:'賞与が安定しているほど退職金が高めになりやすい想定',
+          a:'はい',
+          b:'いいえ',
+          wA: 1.05,
+          wB: 0.98
+        },
+        {
+          key:'union',
+          title:'会社に退職金規程や就業規則が整っている',
+          hint:'制度が整っているほど退職金が出る前提に寄せる',
+          a:'はい',
+          b:'わからない いいえ',
+          wA: 1.08,
+          wB: 0.95
+        },
+        {
+          key:'long',
+          title:'同じ会社で今後も退職まで長く働く予定だった',
+          hint:'長期前提の職場ほど退職金テーブルがある想定',
+          a:'はい',
+          b:'いいえ',
+          wA: 1.03,
+          wB: 1.00
+        },
+        {
+          key:'manager',
+          title:'役職経験がある',
+          hint:'役職手当がある場合は退職金算定に影響するケースがある想定',
+          a:'はい',
+          b:'いいえ',
+          wA: 1.06,
+          wB: 1.00
+        },
+        {
+          key:'insurance',
+          title:'雇用保険に入っていると思う',
+          hint:'失業給付の試算は雇用保険加入を前提にする',
+          a:'はい',
+          b:'わからない いいえ',
+          wA: 1.00,
+          wB: 0.20
+        }
+      ]
+
+      const ui = {
+        step: 1
+      }
+
+      function n(v){
+        const x = Number(v)
+        if(!isFinite(x)) return null
+        return x
+      }
+
+      function yen(v){
+        const x = Math.max(0, Math.round(v))
+        const s = String(x)
+        let out = ''
+        for(let i=0;i<s.length;i++){
+          const idx = s.length - i
+          out += s[i]
+          if(idx>1 && idx%3===1) out += ','
+        }
+        return out + '円'
+      }
+
+      function clamp(v, a, b){
+        return Math.min(b, Math.max(a, v))
+      }
+
+      function setStep(next){
+        ui.step = next
+
+        el('step1').classList.toggle('hide', next !== 1)
+        el('step2').classList.toggle('hide', next !== 2)
+        el('step3').classList.toggle('hide', next !== 3)
+
+        const titles = ['ステップ1 基本情報','ステップ2 質問','ステップ3 結果']
+        const notes = [
+          '入力はざっくりでOKです。あとで調整できます。',
+          'できる範囲で答えてください。わからない場合はそのまま次へ進んでもOKです。',
+          '概算結果です。制度や加入期間などで増減します。'
+        ]
+
+        el('stepTitle').textContent = titles[next-1]
+        el('stepNote').textContent = notes[next-1]
+
+        const pct = next===1 ? 33 : next===2 ? 66 : 100
+        el('barFill').style.width = pct + '%'
+        el('progText').textContent = next + ' / 3'
+      }
+
+      function validateStep1(){
+        state.age = n(el('age').value)
+        state.serviceYears = n(el('serviceYears').value)
+        state.annualIncome = n(el('annualIncome').value)
+        state.workType = el('workType').value
+        state.reason = el('reason').value
+        state.plan = el('plan').value
+
+        const errs = []
+        if(state.age === null || state.age < 15 || state.age > 80) errs.push('年齢を入力してください')
+        if(state.serviceYears === null || state.serviceYears < 0 || state.serviceYears > 60) errs.push('勤続年数を入力してください')
+        if(state.annualIncome === null || state.annualIncome < 0) errs.push('年収を入力してください')
+
+        if(errs.length){
+          alert(errs.join('\n'))
+          return false
+        }
+        return true
+      }
+
+      function buildQuestions(){
+        const wrap = el('qWrap')
+        wrap.innerHTML = ''
+
+        questions.forEach((q, idx)=>{
+          const card = document.createElement('div')
+          card.className = 'qCard'
+
+          const head = document.createElement('div')
+          head.className = 'qTitle'
+
+          const h = document.createElement('h4')
+          h.textContent = (idx+1) + ' ' + q.title
+
+          head.appendChild(h)
+          card.appendChild(head)
+
+          const hint = document.createElement('p')
+          hint.className = 'qHint'
+          hint.textContent = q.hint
+          card.appendChild(hint)
+
+          const choices = document.createElement('div')
+          choices.className = 'choices'
+
+          const btnA = document.createElement('div')
+          btnA.className = 'chip'
+          btnA.textContent = q.a
+          btnA.setAttribute('data-key', q.key)
+          btnA.setAttribute('data-val', 'A')
+
+          const btnB = document.createElement('div')
+          btnB.className = 'chip'
+          btnB.textContent = q.b
+          btnB.setAttribute('data-key', q.key)
+          btnB.setAttribute('data-val', 'B')
+
+          const current = state.answers[q.key] || null
+          if(current === 'A') btnA.classList.add('on')
+          if(current === 'B') btnB.classList.add('on')
+
+          ;[btnA, btnB].forEach(btn=>{
+            btn.addEventListener('click', ()=>{
+              const k = btn.getAttribute('data-key')
+              const v = btn.getAttribute('data-val')
+              state.answers[k] = v
+              buildQuestions()
+            })
+          })
+
+          choices.appendChild(btnA)
+          choices.appendChild(btnB)
+          card.appendChild(choices)
+
+          wrap.appendChild(card)
+        })
+      }
+
+      function yearsMultiplier(y){
+        if(y < 1) return 0.0
+        if(y < 3) return 0.6
+        if(y < 5) return 0.9
+        if(y < 10) return 1.6
+        if(y < 15) return 2.2
+        if(y < 20) return 2.9
+        if(y < 25) return 3.6
+        if(y < 30) return 4.3
+        if(y < 35) return 5.0
+        return 5.6
+      }
+
+      function workTypeFactor(t){
+        if(t === 'regular') return 1.00
+        if(t === 'contract') return 0.75
+        return 0.45
+      }
+
+      function reasonFactor(r){
+        if(r === 'company') return 1.10
+        if(r === 'medical') return 1.05
+        return 0.95
+      }
+
+      function planFactor(p){
+        if(p === 'has') return 1.15
+        if(p === 'none') return 0.20
+        return 0.90
+      }
+
+      function qFactor(){
+        let f = 1.0
+        questions.forEach(q=>{
+          const ans = state.answers[q.key]
+          if(ans === 'A') f *= q.wA
+          if(ans === 'B') f *= q.wB
+        })
+        return f
+      }
+
+      function estimateRetirementPay(){
+        const monthly = (state.annualIncome || 0) / 12
+        const base = monthly
+        const y = state.serviceYears || 0
+
+        const mult = yearsMultiplier(y)
+        const est = base * mult * workTypeFactor(state.workType) * reasonFactor(state.reason) * planFactor(state.plan) * qFactor()
+
+        const floor = 0
+        const cap = (state.annualIncome || 0) * 2.2
+        return clamp(est, floor, cap)
+      }
+
+      function estimateUnemploymentPay(){
+        const insuredAns = state.answers.insurance || 'A'
+        if(insuredAns === 'B') return 0
+
+        const dailyBase = (state.annualIncome || 0) / 365
+        const rate = 0.55
+        const daily = dailyBase * rate
+
+        const y = state.serviceYears || 0
+        let days = 90
+        if(state.reason === 'company') days = 180
+        else if(y >= 10) days = 150
+        else if(y >= 5) days = 120
+
+        if(state.age !== null && state.age >= 45) days += 30
+        if(state.age !== null && state.age >= 60) days += 30
+
+        const waitPenalty = state.reason === 'voluntary' ? 0.85 : 1.00
+        const rough = daily * days * waitPenalty
+
+        const cap = (state.annualIncome || 0) * 0.9
+        return clamp(rough, 0, cap)
+      }
+
+      function buildResult(){
+        const retire = estimateRetirementPay()
+        const unemp = estimateUnemploymentPay()
+        const total = retire + unemp
+
+        el('totalMoney').textContent = yen(total)
+
+        const parts = []
+        parts.push('退職金の目安 ' + yen(retire))
+        parts.push('失業給付の目安 ' + yen(unemp))
+        el('breakdownText').textContent = parts.join(' / ') + ' / 条件により増減します'
+
+        const pills = el('summaryPills')
+        pills.innerHTML = ''
+        const makePill = (t)=>{
+          const s = document.createElement('span')
+          s.className = 'pill'
+          s.textContent = t
+          return s
+        }
+        pills.appendChild(makePill('年齢 ' + state.age))
+        pills.appendChild(makePill('勤続 ' + state.serviceYears + '年'))
+        pills.appendChild(makePill('年収 ' + yen(state.annualIncome)))
+        const reasonLabel = state.reason === 'company' ? '会社都合' : state.reason === 'medical' ? '病気等' : '自己都合'
+        pills.appendChild(makePill(reasonLabel))
+
+        const act = []
+        act.push('会社の就業規則や退職金規程で、算定方法と支給条件を確認')
+        act.push('雇用保険の加入状況と直近6か月の賃金を確認')
+        act.push('離職票の退職理由区分が自己都合か会社都合かを要チェック')
+        el('nextAction').textContent = act.join(' / ')
+      }
+
+      el('toStep2').addEventListener('click', ()=>{
+        if(!validateStep1()) return
+        buildQuestions()
+        setStep(2)
+      })
+
+      el('backTo1').addEventListener('click', ()=> setStep(1))
+
+      el('toStep3').addEventListener('click', ()=>{
+        buildResult()
+        setStep(3)
+      })
+
+      el('backTo2').addEventListener('click', ()=> setStep(2))
+
+      el('resetAll').addEventListener('click', ()=>{
+        el('age').value = ''
+        el('serviceYears').value = ''
+        el('annualIncome').value = ''
+        el('workType').value = 'regular'
+        el('reason').value = 'voluntary'
+        el('plan').value = 'unknown'
+        state.answers = {}
+        setStep(1)
+      })
+
+      el('fillDemo').addEventListener('click', ()=>{
+        el('age').value = 35
+        el('serviceYears').value = 8
+        el('annualIncome').value = 5200000
+        el('workType').value = 'regular'
+        el('reason').value = 'voluntary'
+        el('plan').value = 'unknown'
+      })
+
+      setStep(1)
+    })()
+  </script>
+</body>
+</html>
